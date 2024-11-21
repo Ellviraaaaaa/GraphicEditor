@@ -1,13 +1,13 @@
 package com.example.graphiceditor.service.impl;
 
 import com.example.graphiceditor.model.Image;
+import com.example.graphiceditor.proxy.ImageProxy;
 import com.example.graphiceditor.repository.ImageRepository;
 import com.example.graphiceditor.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ImageServiceImpl implements ImageService {
@@ -17,6 +17,11 @@ public class ImageServiceImpl implements ImageService {
     @Autowired
     public ImageServiceImpl(ImageRepository imageRepository) {
         this.imageRepository = imageRepository;
+    }
+
+    @Override
+    public ImageProxy loadImage(String fileName) {
+        return null;
     }
 
     @Override
