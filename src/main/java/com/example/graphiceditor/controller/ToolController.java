@@ -1,5 +1,6 @@
 package com.example.graphiceditor.controller;
 
+import com.example.graphiceditor.prototype.ColorPalette;
 import com.example.graphiceditor.model.Tool;
 import com.example.graphiceditor.service.ToolService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,4 +43,10 @@ public class ToolController {
     public void deleteTool(@PathVariable int id) {
         toolService.deleteTool(id);
     }
+
+    @PostMapping("/palette/set-active")
+    public void setActiveColor(@RequestBody ColorPalette palette, @RequestParam String color) {
+        toolService.setActiveColor(palette, color);
+    }
+
 }

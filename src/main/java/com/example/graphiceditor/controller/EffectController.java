@@ -1,7 +1,10 @@
 package com.example.graphiceditor.controller;
 
 import com.example.graphiceditor.model.Effect;
+import com.example.graphiceditor.prototype.Filter;
+import com.example.graphiceditor.model.Image;
 import com.example.graphiceditor.service.EffectService;
+import com.example.graphiceditor.service.impl.ImageServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,10 +15,12 @@ import java.util.List;
 public class EffectController {
 
     private final EffectService effectService;
+    private final ImageServiceImpl imageService;
 
     @Autowired
-    public EffectController(EffectService effectService) {
+    public EffectController(EffectService effectService, ImageServiceImpl imageService) {
         this.effectService = effectService;
+        this.imageService = imageService;
     }
 
     // Створення нового ефекту
@@ -47,5 +52,12 @@ public class EffectController {
     public void deleteEffect(@PathVariable int id) {
         effectService.deleteEffect(id);
     }
+
+    @PostMapping("/{imageId}/filter")
+    public void applyFilter(@PathVariable int imageId, @RequestBody Filter filter) {
+        Image image = imageService.getImageById(imageId); // отримання зображення
+        effectService.applyFilter(filter, image);
+    }
+
 }
 

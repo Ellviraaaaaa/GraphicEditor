@@ -1,13 +1,14 @@
 package com.example.graphiceditor.service.impl;
 
 import com.example.graphiceditor.model.Effect;
+import com.example.graphiceditor.prototype.Filter;
+import com.example.graphiceditor.model.Image;
 import com.example.graphiceditor.repository.EffectRepository;
 import com.example.graphiceditor.service.EffectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class EffectServiceImpl implements EffectService {
@@ -53,5 +54,26 @@ public class EffectServiceImpl implements EffectService {
             throw new RuntimeException("Effect not found with id " + id);
         }
     }
+
+    @Override
+    public void applyFilter(Filter filter, Image image) {
+        System.out.println("Applying filter: " + filter.getName() + " with intensity: " + filter.getIntensity());
+
+        int[][] pixels = image.getPixels();
+        for (int i = 0; i < pixels.length; i++) {
+            for (int j = 0; j < pixels[i].length; j++) {
+
+                pixels[i][j] = applyFilterToPixel(pixels[i][j], filter);
+            }
+        }
+        image.setPixels(pixels);
+        System.out.println("Filter successfully applied.");
+    }
+
+    private int applyFilterToPixel(int pixel, Filter filter) {
+        int intensity = (int) (filter.getIntensity() * 255); // Масштабування інтенсивності
+        return Math.min(pixel + intensity, 255); // Обмеження значень пікселя
+    }
 }
+
 

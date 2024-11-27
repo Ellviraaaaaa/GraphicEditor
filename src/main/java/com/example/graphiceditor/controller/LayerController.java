@@ -1,5 +1,6 @@
 package com.example.graphiceditor.controller;
 
+import com.example.graphiceditor.prototype.FontStyle;
 import com.example.graphiceditor.model.Layer;
 import com.example.graphiceditor.service.LayerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,5 +43,12 @@ public class LayerController {
     public void deleteLayer(@PathVariable int id) {
         layerService.deleteLayer(id);
     }
+
+    @PostMapping("/{layerId}/font-style")
+    public void applyFontStyle(@PathVariable int layerId, @RequestBody FontStyle fontStyle) {
+        Layer layer = layerService.getLayerById(layerId);
+        layerService.applyFontStyle(fontStyle, layer);
+    }
+
 }
 

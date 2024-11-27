@@ -1,9 +1,6 @@
 package com.example.graphiceditor.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class Layer {
@@ -14,6 +11,9 @@ public class Layer {
     private String name;
     private int zIndex;
     private boolean visible;
+    @Embedded
+    private Text text;
+
 
     public Layer() {}
 
@@ -55,5 +55,19 @@ public class Layer {
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
-}
+
+    public Layer(Text text) {
+        this.text = text;
+        }
+
+        public Text getText() {
+            return text;
+        }
+
+        public void setText(Text text) {
+            this.text = text;
+        }
+    }
+
+
 
