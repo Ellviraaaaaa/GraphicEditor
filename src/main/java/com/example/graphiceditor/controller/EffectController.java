@@ -1,5 +1,6 @@
 package com.example.graphiceditor.controller;
 
+import com.example.graphiceditor.decorator.*;
 import com.example.graphiceditor.model.Effect;
 import com.example.graphiceditor.prototype.Filter;
 import com.example.graphiceditor.model.Image;
@@ -58,6 +59,25 @@ public class EffectController {
         Image image = imageService.getImageById(imageId); // отримання зображення
         effectService.applyFilter(filter, image);
     }
+    @PostMapping("/custom")
+    public String applyCustomEffect(@RequestParam boolean applyFilter,
+                                    @RequestParam boolean adjustBrightness,
+                                    @RequestParam boolean adjustContrast) {
+        EffectComponent effect = new BasicEffect();
+
+        if (applyFilter) {
+            effect = new FilterEffectDecorator(effect);
+        }
+        if (adjustBrightness) {
+            effect = new BrightnessEffectDecorator(effect);
+        }
+        if (adjustContrast) {
+            effect = new ContrastEffectDecorator(effect);
+        }
+
+        return effect.applyEffect();
+    }
+
 
 }
 
