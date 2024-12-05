@@ -15,7 +15,12 @@ public class ImageController {
 
     @Autowired
     public ImageController(ImageService imageService) {
-        this.imageService = imageService;
+        this.imageService = imageService;  // Ініціалізація через конструктор
+    }
+
+    @PostMapping
+    public void setImageEditor(@RequestParam String imageType) {
+        imageService.setImageEditor(imageType);  // Налаштовуємо редактор в залежності від типу зображення
     }
 
     @PostMapping
@@ -42,5 +47,20 @@ public class ImageController {
     public void deleteImage(@PathVariable int id) {
         imageService.deleteImage(id);
     }
+    @PutMapping("/{id}/applyEffect")
+    public void applyEffectToImage(@PathVariable int id, @RequestParam String effectName) {
+        imageService.applyEffectToImage(id, effectName);
+    }
+
+    @PutMapping("/{id}/resize")
+    public void resizeImage(@PathVariable int id, @RequestParam int width, @RequestParam int height) {
+        imageService.resizeImage(id, width, height);
+    }
+
+    @PutMapping("/{id}/save")
+    public void saveImage(@PathVariable int id, @RequestParam String filePath) {
+        imageService.saveImage(id, filePath);
+    }
+
 }
 

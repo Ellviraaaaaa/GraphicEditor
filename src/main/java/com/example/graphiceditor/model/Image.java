@@ -21,6 +21,7 @@ public class Image {
     private String name;
     private String format; // bmp, png, jpg
     private byte[] data;
+    private String type;
 
     // Поле для зберігання пікселів (не зберігається в базі)
     private transient int[][] pixels;
@@ -53,6 +54,7 @@ public class Image {
         return id;
     }
 
+    // Сеттер для поля id
     public void setId(int id) {
         this.id = id;
     }
@@ -76,6 +78,15 @@ public class Image {
     public byte[] getData() {
         return data;
     }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
 
     public void setData(byte[] data) {
         this.data = data;

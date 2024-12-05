@@ -1,5 +1,8 @@
 package com.example.graphiceditor.service.impl;
 
+import com.example.graphiceditor.bridge.ImageEditor;
+import com.example.graphiceditor.bridge.RasterImageEditor;
+import com.example.graphiceditor.bridge.VectorImageEditor;
 import com.example.graphiceditor.model.Image;
 import com.example.graphiceditor.proxy.ImageProxy;
 import com.example.graphiceditor.repository.ImageRepository;
@@ -13,6 +16,19 @@ import java.util.List;
 public class ImageServiceImpl implements ImageService {
 
     private final ImageRepository imageRepository;
+    private ImageEditor imageEditor;
+
+    @Override
+    public void setImageEditor(String imageType) {
+        if (imageType.equalsIgnoreCase("raster")) {
+            this.imageEditor = new RasterImageEditor();
+        } else if (imageType.equalsIgnoreCase("vector")) {
+            this.imageEditor = new VectorImageEditor();
+        } else {
+            throw new IllegalArgumentException("Unsupported image type: " + imageType);
+        }
+    }
+
 
     @Autowired
     public ImageServiceImpl(ImageRepository imageRepository) {
@@ -42,21 +58,43 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public Image updateImage(int id, Image image) {
-        if (imageRepository.existsById(id)) {
-            image.setId(id);
-            return imageRepository.save(image);
-        } else {
-            throw new RuntimeException("Image not found with id " + id);
-        }
+        Image existingImage = getImageById(id);
+        existingImage.setName(image.getName());
+        existingImage.setType(image.getType());
+        return existingImage;
     }
 
     @Override
     public void deleteImage(int id) {
-        if (imageRepository.existsById(id)) {
-            imageRepository.deleteById(id);
+    }
+
+    @Override
+    public void applyEffectToImage(int id, String effectName) {
+            if (imageEditor != null) {
+                imageEditor.applyEffect(effectName);  // Викликаємо метод для відповідного редактора
+            } else {
+                throw new IllegalStateException("Image editor is not set.");
+            }
+    }
+
+    @Override
+    public void resizeImage(int id, int width, int height) {
+        if (imageEditor != null) {
+            imageEditor.resize(width, height);  // Викликаємо метод для відповідного редактора
         } else {
-            throw new RuntimeException("Image not found with id " + id);
+            throw new IllegalStateException("Image editor is not set.");
         }
     }
+
+    @Override
+    public void saveImage(int id, String filePath) {
+        if (imageEditor != null) {
+            imageEditor.save(filePath);  // Викликаємо метод для відповідного редактора
+        } else {
+            throw new IllegalStateException("Image editor is not set.");
+        }
+    }
+
 }
+
 
