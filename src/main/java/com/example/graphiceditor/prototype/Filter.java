@@ -1,5 +1,7 @@
 package com.example.graphiceditor.prototype;
 
+import com.example.graphiceditor.model.Image;
+
 public class Filter implements Cloneable {
     private String name;
     private double intensity;
@@ -42,5 +44,8 @@ public class Filter implements Cloneable {
     }
 
     public void setId(int id) {
+    }
+
+    public void apply(Image image) {
     }
 }

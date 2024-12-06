@@ -1,8 +1,10 @@
 package com.example.graphiceditor.service.impl;
 
+import com.example.graphiceditor.flyweight.Flyweight;
+import com.example.graphiceditor.flyweight.FlyweightFactory;
 import com.example.graphiceditor.model.Effect;
-import com.example.graphiceditor.prototype.Filter;
 import com.example.graphiceditor.model.Image;
+import com.example.graphiceditor.prototype.Filter;
 import com.example.graphiceditor.repository.EffectRepository;
 import com.example.graphiceditor.service.EffectService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,25 +12,35 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+
 @Service
 public class EffectServiceImpl implements EffectService {
 
+    private final FlyweightFactory flyweightFactory;
     private final EffectRepository effectRepository;
 
-    @Autowired
-    public EffectServiceImpl(EffectRepository effectRepository) {
+    public EffectServiceImpl(FlyweightFactory flyweightFactory, EffectRepository effectRepository) {
+        this.flyweightFactory = flyweightFactory;
         this.effectRepository = effectRepository;
     }
 
     @Override
     public Effect createEffect(Effect effect) {
+        // Отримуємо Flyweight-об'єкт
+        Flyweight flyweightEffect = flyweightFactory.getEffect(effect.getName());
+
+        // Використовуємо метод apply (щоб уникнути попередження)
+        flyweightEffect.apply("Image for effect " + effect.getName());
+
+        System.out.println("Flyweight count: " + flyweightFactory.getFlyweightCount());
+
+        // Зберігаємо ефект у репозиторії
         return effectRepository.save(effect);
     }
 
     @Override
     public Effect getEffectById(int id) {
-        return effectRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Effect not found with id " + id));
+        return effectRepository.findById(id).orElseThrow(() -> new RuntimeException("Effect not found"));
     }
 
     @Override
@@ -38,42 +50,23 @@ public class EffectServiceImpl implements EffectService {
 
     @Override
     public Effect updateEffect(int id, Effect effect) {
-        if (effectRepository.existsById(id)) {
-            effect.setId(id);
-            return effectRepository.save(effect);
-        } else {
-            throw new RuntimeException("Effect not found with id " + id);
-        }
+        Effect existingEffect = getEffectById(id);
+        existingEffect.setName(effect.getName());
+        return effectRepository.save(existingEffect);
     }
 
     @Override
     public void deleteEffect(int id) {
-        if (effectRepository.existsById(id)) {
-            effectRepository.deleteById(id);
-        } else {
-            throw new RuntimeException("Effect not found with id " + id);
-        }
+        effectRepository.deleteById(id);
     }
 
     @Override
     public void applyFilter(Filter filter, Image image) {
-        System.out.println("Applying filter: " + filter.getName() + " with intensity: " + filter.getIntensity());
-
-        int[][] pixels = image.getPixels();
-        for (int i = 0; i < pixels.length; i++) {
-            for (int j = 0; j < pixels[i].length; j++) {
-
-                pixels[i][j] = applyFilterToPixel(pixels[i][j], filter);
-            }
-        }
-        image.setPixels(pixels);
-        System.out.println("Filter successfully applied.");
-    }
-
-    private int applyFilterToPixel(int pixel, Filter filter) {
-        int intensity = (int) (filter.getIntensity() * 255); // Масштабування інтенсивності
-        return Math.min(pixel + intensity, 255); // Обмеження значень пікселя
+        // Реалізація для застосування фільтру
+        filter.apply(image);
     }
 }
+
+
 
 
